@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Gold Stake Lotto</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/assets/img/logo.png">
+  <link rel="stylesheet" href="/assets/css/site.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <script src="/assets/js/admin.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap site-header__bar">
+      <a href="/" class="brand" aria-label="Back to the site">
+        <img src="/assets/img/logo.png" alt="" width="58" height="42">
+        <span class="brand__word" aria-hidden="true"><span>GOLD STAKE</span><span>ADMIN</span></span>
+      </a>
+      <button type="button" class="btn btn--ghost admin-small" data-logout hidden>Log out</button>
+    </div>
+  </header>
+
+  <main class="wrap admin">
+    <!-- Login -->
+    <section class="form-card admin-login" data-login>
+      <h1 class="h-sec h-sec--sm">Site admin</h1>
+      <p class="form-card__intro">Enter the admin password to update the jackpot, draw and results.</p>
+      <form class="form" data-login-form>
+        <div class="field">
+          <label for="admin-password">Password</label>
+          <input id="admin-password" name="password" type="password" required autocomplete="current-password">
+        </div>
+        <div class="form__error" data-login-error hidden role="alert"></div>
+        <button type="submit" class="btn btn--gold btn--block">Log in</button>
+      </form>
+    </section>
+
+    <!-- Editor -->
+    <form class="admin-editor" data-editor hidden novalidate>
+      <div class="admin-bar">
+        <h1 class="h-sec h-sec--sm">Site settings</h1>
+        <div class="admin-bar__actions">
+          <span class="admin-status" data-status role="status" aria-live="polite"></span>
+          <button type="submit" class="btn btn--gold">Save changes</button>
+        </div>
+      </div>
+      <div class="form__error" data-save-error hidden role="alert"></div>
+
+      <fieldset class="form-card form-card--solid admin-group">
+        <legend>Next draw</legend>
+        <div class="admin-grid">
+          <div class="field">
+            <label for="f-jackpot">Estimated jackpot</label>
+            <input id="f-jackpot" name="jackpotAmount" required maxlength="40" placeholder="$25,000">
+          </div>
+          <div class="field">
+            <label for="f-draw">Next draw date &amp; time</label>
+            <input id="f-draw" name="nextDrawDate" required maxlength="60" placeholder="Sat 12 Jul, 8pm">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-card form-card--solid admin-group">
+        <legend>Results</legend>
+        <p class="admin-help">Newest draw first. The top one shows as “Latest result”; the next five show as previous draws. Numbers are 0–99 and must all be different.</p>
+        <div class="admin-results" data-results></div>
+        <button type="button" class="btn btn--ghost admin-small" data-add-result>+ Add a draw result</button>
+      </fieldset>
+
+      <fieldset class="form-card form-card--solid admin-group">
+        <legend>Live stream</legend>
+        <div class="admin-grid">
+          <div class="field">
+            <label for="f-video">Live video (YouTube link or ID)</label>
+            <input id="f-video" name="liveVideoId" placeholder="Leave empty to link to the channel instead">
+          </div>
+          <div class="field">
+            <label for="f-channel">YouTube channel URL</label>
+            <input id="f-channel" name="youtubeChannelUrl" required type="url" placeholder="https://www.youtube.com/@GoldStakeLotto">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-card form-card--solid admin-group">
+        <legend>Contact &amp; channels</legend>
+        <div class="admin-grid">
+          <div class="field">
+            <label for="f-ussd">USSD code</label>
+            <input id="f-ussd" name="ussdCode" required maxlength="20" placeholder="*123#">
+          </div>
+          <div class="field">
+            <label for="f-wa">WhatsApp number</label>
+            <input id="f-wa" name="whatsappNumber" required maxlength="30" placeholder="+263 77 000 0000">
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone number</label>
+            <input id="f-phone" name="phoneNumber" required maxlength="30" placeholder="+263 78 000 0000">
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" required type="email" placeholder="info@goldstakelotto.com">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-card form-card--solid admin-group">
+        <legend>Licence</legend>
+        <label class="admin-check">
+          <input type="checkbox" name="licenceConfirmed">
+          <span>Licence has been granted by the Lotteries &amp; Gaming Board of Zimbabwe</span>
+        </label>
+        <p class="admin-help">While unticked, the site says the licence is “to be confirmed once granted”.</p>
+      </fieldset>
+    </form>
+
+    <template data-result-row>
+      <div class="admin-result">
+        <div class="field">
+          <label>Draw date</label>
+          <input type="date" data-r="date" required>
+        </div>
+        <div class="field"><label>1st</label><input type="number" min="0" max="99" step="1" data-r="n0" required></div>
+        <div class="field"><label>2nd</label><input type="number" min="0" max="99" step="1" data-r="n1" required></div>
+        <div class="field"><label>3rd</label><input type="number" min="0" max="99" step="1" data-r="n2" required></div>
+        <button type="button" class="admin-remove" data-remove aria-label="Remove this result">✕</button>
+      </div>
+    </template>
+  </main>
+</body>
+</html>
