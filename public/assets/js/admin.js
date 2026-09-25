@@ -24,6 +24,11 @@
   var gamesBox = $('[data-lotto-games]');
   var groupTemplate = $('[data-game-group]');
   var logoutBtn = $('[data-logout]');
+  var inbox = $('[data-inbox]');
+  var inboxList = $('[data-inbox-list]');
+  var inboxError = $('[data-inbox-error]');
+  var FORM_LABELS = { agent: 'Agent enquiry', contact: 'Contact message' };
+  var FIELD_LABELS = { name: 'Name', phone: 'Phone', shop: 'Shop & town', contact: 'Phone or email', message: 'Message' };
 
   function getToken() { try { return sessionStorage.getItem(TOKEN_KEY); } catch (e) { return null; } }
   function setToken(t) { try { t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); } catch (e) {} }
@@ -203,6 +208,8 @@
         loginBox.hidden = true;
         editor.hidden = false;
         logoutBtn.hidden = false;
+        inbox.hidden = false;
+        loadInbox();
       });
   }
 
@@ -243,6 +250,55 @@
       })
       .then(function () { btn.disabled = false; });
   });
+
+  // ---------- Enquiries ----------
+  function renderEntry(entry) {
+    var li = document.createElement('li');
+    li.className = 'admin-entry';
+    var head = document.createElement('div');
+    head.className = 'admin-entry__head';
+    var type = document.createElement('span');
+    type.className = 'admin-entry__type';
+    type.textContent = FORM_LABELS[entry.form] || entry.form;
+    var when = document.createElement('time');
+    when.className = 'admin-entry__when';
+    when.dateTime = entry.at;
+    when.textContent = new Date(entry.at).toLocaleString();
+    head.appendChild(type);
+    head.appendChild(when);
+    var dl = document.createElement('dl');
+    dl.className = 'admin-entry__fields';
+    Object.keys(entry.fields || {}).forEach(function (k) {
+      var dt = document.createElement('dt');
+      dt.textContent = FIELD_LABELS[k] || k;
+      var dd = document.createElement('dd');
+      dd.textContent = entry.fields[k];
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    });
+    li.appendChild(head);
+    li.appendChild(dl);
+    return li;
+  }
+
+  function loadInbox() {
+    inboxError.hidden = true;
+    return api('GET', '/api/admin/submissions')
+      .then(function (data) {
+        var items = data.items || [];
+        if (!items.length) {
+          var empty = document.createElement('li');
+          empty.className = 'admin-help';
+          empty.textContent = 'No enquiries yet.';
+          inboxList.replaceChildren(empty);
+        } else {
+          inboxList.replaceChildren.apply(inboxList, items.map(renderEntry));
+        }
+      })
+      .catch(function (err) { showError(inboxError, err.message); });
+  }
+
+  $('[data-inbox-refresh]').addEventListener('click', loadInbox);
 
   logoutBtn.addEventListener('click', function () { setToken(null); location.reload(); });
 

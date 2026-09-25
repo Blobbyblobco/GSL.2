@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gold Stake Lotto (GSL) — Zimbabwe's National Lottery</title>
-  <meta name="description" content="Zimbabwe's regulated national lottery. Weekly jackpots up to $1,000,000, fast Rush draws all day, and instant-win scratch cards. Play from $1 in store, by USSD, or online. 18+ only.">
+  <meta name="description" content="Zimbabwe's regulated national lottery. Weekly jackpots up to $1,000,000, fast Rush draws all day, and instant-win scratch cards. Play from $1 in store or by USSD. 18+ only.">
   <meta name="theme-color" content="#0a130d">
   <link rel="icon" type="image/png" href="/assets/img/logo.png">
   <link rel="apple-touch-icon" href="/assets/img/logo.png">
@@ -110,7 +110,7 @@
         <div class="pill"><span class="pill__dot"></span><span class="pill__text">Zimbabwe's National Lottery</span></div>
         <h1>Small stakes, big dreams.<br><span class="gold">Drawn fair.</span></h1>
         <p class="hero__lead">Weekly jackpots up to $1,000,000. Fast draws all day. Instant-win scratch cards on the way.</p>
-        <p class="hero__sub">Play from $1 — in store, by USSD, or online.</p>
+        <p class="hero__sub">Play from $1 — in store or by USSD. Online coming soon.</p>
         <div class="hero__ctas">
           <a href="#lotto" class="btn btn--gold">See the Games</a>
           <a href="#how" class="btn btn--ghost">How to Play</a>
@@ -142,7 +142,7 @@
         <div class="card card--hover">
           <div class="step-num">STEP 02</div>
           <h3>Pick and enter</h3>
-          <p>Pick numbers or symbols, or auto-pick. Enter in store, by USSD, or online.</p>
+          <p>Pick numbers or symbols, or auto-pick. Enter in store or by USSD.</p>
         </div>
         <div class="card card--hover">
           <div class="step-num">STEP 03</div>
@@ -371,7 +371,7 @@
       <div class="sec-head">
         <div class="eyebrow">Three ways to play</div>
         <h2 id="ways-title" class="h-sec">However you reach us, you can play</h2>
-        <p class="lead">In store, by USSD on any phone, or online.</p>
+        <p class="lead">In store or by USSD on any phone. Online coming soon.</p>
       </div>
       <div class="grid-3">
         <div class="card card--hover">
@@ -390,7 +390,8 @@
           <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg></div>
           <h3>Online</h3>
           <p>Play from any device, anywhere. Pick or auto-pick in seconds.</p>
-          <!-- TODO: add a "Play online →" link here once the online play URL is confirmed. -->
+          <!-- TODO: replace with a "Play online →" link when online play launches. -->
+          <span class="card__cta">Coming soon</span>
         </div>
       </div>
     </section>
@@ -410,7 +411,7 @@
             <ul class="checks">
               <li><span><strong>Choose a game.</strong> Lotto, Rush, or Instant Win.</span></li>
               <li><span><strong>Pick your numbers or symbols</strong> — or auto-pick.</span></li>
-              <li><span><strong>Enter</strong> in store, by USSD, or online.</span></li>
+              <li><span><strong>Enter</strong> in store or by USSD. Online coming soon.</span></li>
               <li class="star"><span><strong>Check your result.</strong> Rush results are near-instant, Lotto draws Thursday to Sunday at 3pm, scratch cards reveal instantly.</span></li>
             </ul>
           </div>
@@ -455,13 +456,8 @@
             </ol>
           </div>
           <div class="card channel-card">
-            <div class="eyebrow eyebrow--sm">Online</div>
-            <ol>
-              <li>Go to GSL online.</li>
-              <li>Choose your game.</li>
-              <li>Pick numbers or symbols, or auto-pick.</li>
-              <li>Pay and get your confirmation.</li>
-            </ol>
+            <div class="eyebrow eyebrow--sm">Online · Coming soon</div>
+            <p>Play from any device, anywhere. Launching soon.</p>
           </div>
         </div>
       </div>
@@ -515,7 +511,7 @@
             <div data-form-body="agent">
               <h3>Agent enquiry</h3>
               <p class="form-card__intro">Fill this in and we'll call you back.</p>
-              <form name="agent" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" class="form" data-ajax-form>
+              <form name="agent" method="POST" action="/api/forms" class="form" data-ajax-form>
                 <input type="hidden" name="form-name" value="agent">
                 <p class="honeypot"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
                 <div class="field">
@@ -562,7 +558,7 @@
         <div class="card card--hover">
           <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
           <h3>Secure payments</h3>
-          <p>Pay in store, by mobile money, or online. Your ticket is your proof.</p>
+          <p>Pay in cash in store or by mobile money. Your ticket is your proof.</p>
         </div>
       </div>
 
@@ -627,7 +623,7 @@
           </div>
           <div data-form-body="contact">
             <h3>Send us a message</h3>
-            <form name="contact" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" class="form" data-ajax-form>
+            <form name="contact" method="POST" action="/api/forms" class="form" data-ajax-form>
               <input type="hidden" name="form-name" value="contact">
               <p class="honeypot"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
               <div class="field">

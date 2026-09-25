@@ -1,46 +1,61 @@
 # Gold Stake Lotto — website
 
-The public website for Gold Stake Lotto, built from the design export in
-[`design/`](design/). It's a fast static site hosted on **Netlify**, with a small backend for:
+The public website for Gold Stake Lotto (GSL), built from the design export in
+[`design/`](design/). It's a fast static site hosted on **Vercel**, with a small backend for:
 
-- **Forms** — the *Agent enquiry* and *Contact* forms are collected by Netlify Forms
-  (spam-filtered, viewable in the Netlify dashboard, and can be emailed to you).
+- **Forms** — *Agent enquiry* and *Contact* submissions are saved and listed on the admin page,
+  with optional email alerts.
 - **Admin page** at `/admin/` — update each Lotto game's jackpot, next draw and results,
   the live YouTube video, contact numbers and licence status without touching code.
-  Settings are saved in Netlify Blobs and appear on the site within about a minute.
+  Changes appear on the site within about a minute.
+
+Data (settings and form submissions) is stored in **Upstash Redis**, added to the project from
+Vercel's Storage tab.
 
 ## Project layout
 
 ```
 public/                 Everything that gets published
   index.html            The home page (all sections)
-  admin/index.html      Admin page for site settings
+  admin/index.html      Admin page: site settings and enquiries
   thanks.html, 404.html
   assets/css/           site.css (design styles), admin.css
   assets/js/            site.js (page behaviour), admin.js, age-check.js
   assets/fonts/         Public Sans + Source Serif 4 (self-hosted)
   assets/img/logo.png
-lib/settings.mjs        Settings defaults, validation and API logic
-netlify/functions/      settings.mjs — serves /api/settings and /api/admin/verify
-tests/                  Unit tests for the settings API
-netlify.toml            Build, headers and security policy
+api/                    Vercel Functions: settings, forms, admin/verify, admin/submissions
+lib/                    settings.mjs (defaults, validation, API), forms.mjs, store.mjs (Redis)
+tests/                  Unit tests
+vercel.json             Output folder, headers and security policy
 design/                 The original bundled design export, kept for reference
 ```
 
-## Deploy to Netlify (one-time setup)
+## Deploy to Vercel (one-time setup)
 
-1. In Netlify: **Add new site → Import an existing project**, and pick this GitHub repository.
-   The build settings come from `netlify.toml`, so you don't need to change anything. Click **Deploy**.
-2. **Set the admin password.** Go to **Site configuration → Environment variables**, add
-   `ADMIN_PASSWORD`, and use a strong password of 12 or more characters. Then open **Deploys** and
-   **Trigger deploy** so the password takes effect.
-3. **Turn on form emails.** Go to **Forms**. The `agent` and `contact` forms appear after the
-   first deploy. Under **Form notifications**, add an email notification to the inbox that should
-   receive enquiries.
-4. **Custom domain (optional).** Go to **Domain management → Add a domain**, for example
-   `goldstakelotto.com`, and follow the DNS steps. HTTPS is set up automatically.
+1. **Import the repo.** In Vercel: **Add New… → Project**, choose this GitHub repository
+   (`GSL.2`), and click **Import**. Leave *Framework Preset* as **Other**, with no build command.
+   `vercel.json` already tells Vercel to publish the `public` folder. Click **Deploy**.
+   The site is now live on a `*.vercel.app` address, showing the default game details.
+2. **Add storage.** In the project, open **Storage → Create Database** (or **Browse Marketplace**)
+   and choose **Upstash → Redis**. Pick the free plan and a region close to Zimbabwe (for example
+   Europe or South Africa if offered), then **Connect** it to this project. Vercel adds the
+   connection details as environment variables automatically.
+3. **Set the admin password.** Go to **Settings → Environment Variables**, add `ADMIN_PASSWORD`
+   (12 or more characters) for *Production* (and *Preview* if you want).
+4. **Redeploy** so the new variables take effect: **Deployments → ⋯ on the latest → Redeploy**.
+5. **Check it works.** Open `/admin/`, log in, change something, save, and reload the home page.
+   Submit a test enquiry and check that it appears under **Enquiries** on the admin page.
+6. **Email alerts (optional).** Create a free account at resend.com, then add these environment
+   variables and redeploy:
+   - `RESEND_API_KEY`: your Resend API key
+   - `NOTIFY_EMAIL`: where alerts go (comma-separate several addresses)
+   - `NOTIFY_FROM`: a sender on a domain you've verified in Resend, e.g. `GSL Website <web@goldstakelotto.com>`.
+     Until a domain is verified, Resend only delivers to your own Resend account email.
+7. **Custom domain (optional).** Go to **Settings → Domains**, add e.g. `goldstakelotto.com`, and
+   follow the DNS steps. HTTPS is set up automatically.
 
-Every push to the connected branch redeploys the site automatically.
+Every push to the connected branch deploys automatically. The production branch is set under
+**Settings → Git**; other branches get preview URLs.
 
 ## Updating the site day to day
 
@@ -71,18 +86,18 @@ These come from the design and are placeholders until you have the real details:
 - **Draw machine photo.** Add `public/assets/img/draw-machine.jpg` and follow the comment above
   the placeholder in `public/index.html`.
 - **USSD code** `*123#` and the **YouTube channel**. Confirm or change both in the admin page.
-- **Online play link.** Online play isn't live yet; the "Online" card has no link until it is (search for `TODO`).
+- **Online play.** Not launched yet. The site says "Online coming soon"; when it launches, update those
+  lines and add a link on the "Online" card (search for `TODO` and "coming soon").
 - **Scratch cards.** Replace the "coming soon" banner in the Instant Win section once cards are final.
 
 ## Local development
 
-Requires Node 20+.
+Requires Node 22.
 
 ```sh
-npm install
-npm test                                   # settings API unit tests
-ADMIN_PASSWORD=some-long-password npm run dev   # netlify dev on http://localhost:8888
+npm test          # unit tests (settings, forms, storage)
+npm run dev       # vercel dev: needs `npx vercel login` and `npx vercel link` first
 ```
 
-`netlify dev` runs the site, the function and a local Blobs store together. Form submissions
-are only captured on the deployed site.
+`vercel dev` runs the site and the API together. Run `npx vercel env pull .env.local` to use the
+project's Redis database and admin password locally.

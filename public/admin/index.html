@@ -96,6 +96,17 @@
       </fieldset>
     </form>
 
+    <!-- Form submissions -->
+    <section class="admin-inbox" data-inbox hidden>
+      <div class="admin-bar admin-bar--static">
+        <h2 class="h-sec h-sec--sm">Enquiries</h2>
+        <button type="button" class="btn btn--ghost admin-small" data-inbox-refresh>Refresh</button>
+      </div>
+      <p class="admin-help">The latest 100 agent enquiries and contact messages, newest first.</p>
+      <div class="form__error" data-inbox-error hidden role="alert"></div>
+      <ul class="admin-entries" data-inbox-list></ul>
+    </section>
+
     <template data-game-group>
       <fieldset class="form-card form-card--solid admin-group">
         <legend data-game-name></legend>

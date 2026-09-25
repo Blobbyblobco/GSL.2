@@ -138,7 +138,7 @@
       .catch(function (err) { if (window.console) console.warn('Could not load live settings:', err); });
   }
 
-  // ---------- Forms (Netlify Forms, submitted without a page reload) ----------
+  // ---------- Forms (posted to /api/forms without a page reload) ----------
   function initForms() {
     $all('form[data-ajax-form]').forEach(function (form) {
       var name = form.getAttribute('name');
@@ -155,20 +155,29 @@
         var original = button.textContent;
         button.textContent = 'Sending…';
 
-        fetch('/', {
+        fetch(form.action, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
           body: new URLSearchParams(new FormData(form)).toString()
         })
           .then(function (r) {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
+            if (!r.ok) {
+              return r.json().catch(function () { return {}; }).then(function (d) {
+                var err = new Error(d.error || 'HTTP ' + r.status);
+                err.fromServer = !!d.error;
+                throw err;
+              });
+            }
             form.reset();
             if (body) body.hidden = true;
             if (thanks) { thanks.hidden = false; thanks.focus(); }
           })
-          .catch(function () {
+          .catch(function (err) {
             if (errorBox) {
-              errorBox.textContent = 'Sorry, that didn’t send. Please check your connection and try again, or reach us on WhatsApp.';
+              // Show the server's message (e.g. a missing field); otherwise a generic one.
+              errorBox.textContent = err && err.fromServer
+                ? err.message
+                : 'Sorry, that didn’t send. Please check your connection and try again, or reach us on WhatsApp.';
               errorBox.hidden = false;
             }
           })

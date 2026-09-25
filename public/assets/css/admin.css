@@ -39,6 +39,17 @@
 .admin-check { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--text); cursor: pointer; }
 .admin-check input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--gold); flex: none; }
 
+.admin-inbox { margin-top: 40px; }
+.admin-bar--static { position: static; }
+.admin-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.admin-entry { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+.admin-entry__head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.admin-entry__type { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-hi); }
+.admin-entry__when { font-size: 13px; color: var(--dim); }
+.admin-entry__fields { display: grid; grid-template-columns: 130px 1fr; gap: 6px 14px; margin: 0; font-size: 14.5px; }
+.admin-entry__fields dt { color: var(--dim); font-weight: 600; }
+.admin-entry__fields dd { margin: 0; color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+
 .field input.is-invalid { border-color: #e34d4d; }
 .form__error ul { margin: 6px 0 0; padding-left: 18px; }
 
@@ -46,4 +57,6 @@
   .admin-grid { grid-template-columns: 1fr; }
   .admin-result { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
   .admin-result__date { width: 100%; }
+  .admin-entry__fields { grid-template-columns: 1fr; gap: 2px; }
+  .admin-entry__fields dd { margin-bottom: 8px; }
 }
