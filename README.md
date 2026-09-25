@@ -48,9 +48,9 @@ Go to `https://<your-site>/admin/`, log in with `ADMIN_PASSWORD`, change what yo
 **Save changes**.
 
 - **Lotto games** — Mega 7 (7 of 37, Sundays), Wild 5 (5 of 49, Saturdays), Fast 5 (5 of 42, Fridays),
-  Easy 6 (6 of 39, Thursdays). Each has its own jackpot, next draw and results; results must be
+  Easy 6 (6 of 39, Thursdays), all drawn at 3pm. Each has its own jackpot, next draw and results; results must be
   different numbers from 1 to the game's maximum. After a draw, click **+ Add a draw result** under
-  that game. Leave "Next draw" empty and the site shows the regular day (e.g. "Every Sunday").
+  that game. Leave "Next draw" empty and the site shows the regular day (e.g. "Every Sunday, 3pm").
 - **Rush games and scratch cards** are fixed text in `public/index.html` (picks, prices, multipliers
   and draw frequencies). Scratch cards are a "coming soon" placeholder until names, prices and prizes
   are final.
@@ -71,7 +71,7 @@ These come from the design and are placeholders until you have the real details:
 - **Draw machine photo.** Add `public/assets/img/draw-machine.jpg` and follow the comment above
   the placeholder in `public/index.html`.
 - **USSD code** `*123#` and the **YouTube channel**. Confirm or change both in the admin page.
-- **Online play link.** The "Online" way-to-play card has no link yet (search for `TODO`).
+- **Online play link.** Online play isn't live yet; the "Online" card has no link until it is (search for `TODO`).
 - **Scratch cards.** Replace the "coming soon" banner in the Instant Win section once cards are final.
 
 ## Local development
