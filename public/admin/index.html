@@ -25,7 +25,7 @@
     <!-- Login -->
     <section class="form-card admin-login" data-login>
       <h1 class="h-sec h-sec--sm">Site admin</h1>
-      <p class="form-card__intro">Enter the admin password to update the jackpot, draw and results.</p>
+      <p class="form-card__intro">Enter the admin password to update jackpots, draws and results.</p>
       <form class="form" data-login-form>
         <div class="field">
           <label for="admin-password">Password</label>
@@ -47,26 +47,8 @@
       </div>
       <div class="form__error" data-save-error hidden role="alert"></div>
 
-      <fieldset class="form-card form-card--solid admin-group">
-        <legend>Next draw</legend>
-        <div class="admin-grid">
-          <div class="field">
-            <label for="f-jackpot">Estimated jackpot</label>
-            <input id="f-jackpot" name="jackpotAmount" required maxlength="40" placeholder="$25,000">
-          </div>
-          <div class="field">
-            <label for="f-draw">Next draw date &amp; time</label>
-            <input id="f-draw" name="nextDrawDate" required maxlength="60" placeholder="Sat 12 Jul, 8pm">
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset class="form-card form-card--solid admin-group">
-        <legend>Results</legend>
-        <p class="admin-help">Newest draw first. The top one shows as “Latest result”; the next five show as previous draws. Numbers are 0–99 and must all be different.</p>
-        <div class="admin-results" data-results></div>
-        <button type="button" class="btn btn--ghost admin-small" data-add-result>+ Add a draw result</button>
-      </fieldset>
+      <p class="admin-help">Weekly Lotto games: jackpot, next draw and results. Newest result first — the top one shows on the site as the latest result. Leave “Next draw” empty to show “Weekly draw”.</p>
+      <div data-lotto-games></div>
 
       <fieldset class="form-card form-card--solid admin-group">
         <legend>Live stream</legend>
@@ -114,17 +96,23 @@
       </fieldset>
     </form>
 
-    <template data-result-row>
-      <div class="admin-result">
-        <div class="field">
-          <label>Draw date</label>
-          <input type="date" data-r="date" required>
+    <template data-game-group>
+      <fieldset class="form-card form-card--solid admin-group">
+        <legend data-game-name></legend>
+        <div class="admin-grid">
+          <div class="field">
+            <label>Jackpot</label>
+            <input data-g="jackpot" required maxlength="40">
+          </div>
+          <div class="field">
+            <label>Next draw date &amp; time</label>
+            <input data-g="nextDraw" maxlength="60" placeholder="e.g. Sat 4 Oct, 8pm">
+          </div>
         </div>
-        <div class="field"><label>1st</label><input type="number" min="0" max="99" step="1" data-r="n0" required></div>
-        <div class="field"><label>2nd</label><input type="number" min="0" max="99" step="1" data-r="n1" required></div>
-        <div class="field"><label>3rd</label><input type="number" min="0" max="99" step="1" data-r="n2" required></div>
-        <button type="button" class="admin-remove" data-remove aria-label="Remove this result">✕</button>
-      </div>
+        <div class="admin-subhead">Results</div>
+        <div class="admin-results" data-results></div>
+        <button type="button" class="btn btn--ghost admin-small" data-add-result>+ Add a draw result</button>
+      </fieldset>
     </template>
   </main>
 </body>

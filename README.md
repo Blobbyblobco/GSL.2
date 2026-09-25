@@ -5,8 +5,8 @@ The public website for Gold Stake Lotto, built from the design export in
 
 - **Forms** — the *Agent enquiry* and *Contact* forms are collected by Netlify Forms
   (spam-filtered, viewable in the Netlify dashboard, and can be emailed to you).
-- **Admin page** at `/admin/` — update the jackpot, next draw date, draw results,
-  live YouTube video, contact numbers and licence status without touching code.
+- **Admin page** at `/admin/` — update each Lotto game's jackpot, next draw and results,
+  the live YouTube video, contact numbers and licence status without touching code.
   Settings are saved in Netlify Blobs and appear on the site within about a minute.
 
 ## Project layout
@@ -47,8 +47,11 @@ Every push to the connected branch redeploys the site automatically.
 Go to `https://<your-site>/admin/`, log in with `ADMIN_PASSWORD`, change what you need, and click
 **Save changes**.
 
-- **Results:** click **+ Add a draw result** after each draw. The newest result shows as
-  "Latest result", and the five before it show as "Previous draws". Up to 12 are kept.
+- **Lotto games (Mega 7, Wild 5, Fast 5, Easy 6):** each has its own jackpot, next draw and results.
+  After a draw, click **+ Add a draw result** under that game. The newest result shows on the site
+  under "Latest results". Leave "Next draw" empty and the site shows "Weekly draw".
+- **Rush games and scratch cards** are fixed text in `public/index.html` (prices, multipliers and
+  draw frequencies). Scratch cards are a "coming soon" placeholder until names, prices and prizes are final.
 - **Live stream:** paste the YouTube live link (or video ID) before the draw so it plays on the
   page. Clear the field afterwards to go back to the "Watch live on YouTube" button.
 - **Licence:** tick the box once the Lotteries & Gaming Board licence is granted.
@@ -64,6 +67,8 @@ These come from the design and are placeholders until you have the real details:
 - **Draw machine photo.** Add `public/assets/img/draw-machine.jpg` and follow the comment above
   the placeholder in `public/index.html`.
 - **USSD code** `*123#` and the **YouTube channel**. Confirm or change both in the admin page.
+- **Online play link.** The "Online" way-to-play card has no link yet (search for `TODO`).
+- **Scratch cards.** Replace the "coming soon" banner in the Instant Win section once cards are final.
 
 ## Local development
 

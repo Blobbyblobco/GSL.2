@@ -3,7 +3,14 @@
   'use strict';
 
   var TOKEN_KEY = 'gsl_admin_pw';
-  var TEXT_FIELDS = ['jackpotAmount', 'nextDrawDate', 'liveVideoId', 'youtubeChannelUrl', 'ussdCode', 'whatsappNumber', 'phoneNumber', 'email'];
+  // Must match LOTTO_GAMES in lib/settings.mjs.
+  var GAMES = [
+    { id: 'mega7', name: 'Mega 7', picks: 7 },
+    { id: 'wild5', name: 'Wild 5', picks: 5 },
+    { id: 'fast5', name: 'Fast 5', picks: 5 },
+    { id: 'easy6', name: 'Easy 6', picks: 6 }
+  ];
+  var TEXT_FIELDS = ['liveVideoId', 'youtubeChannelUrl', 'ussdCode', 'whatsappNumber', 'phoneNumber', 'email'];
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $all = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
@@ -14,8 +21,8 @@
   var editor = $('[data-editor]');
   var saveError = $('[data-save-error]');
   var statusEl = $('[data-status]');
-  var resultsBox = $('[data-results]');
-  var rowTemplate = $('[data-result-row]');
+  var gamesBox = $('[data-lotto-games]');
+  var groupTemplate = $('[data-game-group]');
   var logoutBtn = $('[data-logout]');
 
   function getToken() { try { return sessionStorage.getItem(TOKEN_KEY); } catch (e) { return null; } }
@@ -48,55 +55,136 @@
       });
   }
 
-  // ---------- Results rows ----------
-  function addResultRow(result, atTop) {
-    var row = rowTemplate.content.firstElementChild.cloneNode(true);
-    var labels = { date: 'Draw date', n0: '1st number', n1: '2nd number', n2: '3rd number' };
-    $all('[data-r]', row).forEach(function (input) { input.setAttribute('aria-label', labels[input.getAttribute('data-r')]); });
+  // ---------- Lotto games ----------
+  var rowSeq = 0;
+
+  function numberInput(game, i) {
+    var input = document.createElement('input');
+    input.type = 'number';
+    input.min = '0';
+    input.max = '99';
+    input.step = '1';
+    input.required = true;
+    input.setAttribute('data-n', '');
+    input.setAttribute('aria-label', game.name + ' number ' + (i + 1));
+    return input;
+  }
+
+  function addResultRow(game, box, result, atTop) {
+    var row = document.createElement('div');
+    row.className = 'admin-result';
+
+    var dateField = document.createElement('div');
+    dateField.className = 'field admin-result__date';
+    var dateLabel = document.createElement('label');
+    dateLabel.textContent = 'Draw date';
+    var date = document.createElement('input');
+    date.type = 'date';
+    date.required = true;
+    date.setAttribute('data-date', '');
+    date.id = 'r-' + game.id + '-' + (++rowSeq);
+    dateLabel.htmlFor = date.id;
+    dateField.appendChild(dateLabel);
+    dateField.appendChild(date);
+
+    var numsField = document.createElement('div');
+    numsField.className = 'field';
+    var numsLabel = document.createElement('span');
+    numsLabel.className = 'admin-label';
+    numsLabel.textContent = game.picks + ' numbers';
+    var nums = document.createElement('div');
+    nums.className = 'admin-nums';
+    for (var i = 0; i < game.picks; i++) nums.appendChild(numberInput(game, i));
+    numsField.appendChild(numsLabel);
+    numsField.appendChild(nums);
+
+    var remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'admin-remove';
+    remove.textContent = '✕';
+    remove.setAttribute('aria-label', 'Remove this ' + game.name + ' result');
+    remove.addEventListener('click', function () { row.remove(); markDirty(); });
+
+    row.appendChild(dateField);
+    row.appendChild(numsField);
+    row.appendChild(remove);
+
     if (result) {
-      $('[data-r="date"]', row).value = result.date;
-      result.numbers.forEach(function (n, i) { $('[data-r="n' + i + '"]', row).value = n; });
+      date.value = result.date;
+      $all('[data-n]', row).forEach(function (input, j) { input.value = result.numbers[j]; });
     }
-    $('[data-remove]', row).addEventListener('click', function () { row.remove(); markDirty(); });
-    if (atTop) resultsBox.prepend(row); else resultsBox.appendChild(row);
+    if (atTop) box.prepend(row); else box.appendChild(row);
     return row;
   }
 
-  function readResults() {
-    return $all('.admin-result', resultsBox).map(function (row) {
-      return {
-        date: $('[data-r="date"]', row).value,
-        numbers: [0, 1, 2].map(function (i) {
-          var v = $('[data-r="n' + i + '"]', row).value;
-          return v === '' ? NaN : Number(v);
-        })
-      };
+  function buildGameGroups() {
+    GAMES.forEach(function (game) {
+      var group = groupTemplate.content.firstElementChild.cloneNode(true);
+      group.setAttribute('data-game', game.id);
+      $('[data-game-name]', group).textContent = game.name;
+      $all('[data-g]', group).forEach(function (input) {
+        input.id = 'g-' + game.id + '-' + input.getAttribute('data-g');
+        input.previousElementSibling.htmlFor = input.id;
+      });
+      var box = $('[data-results]', group);
+      $('[data-add-result]', group).addEventListener('click', function () {
+        var row = addResultRow(game, box, null, true);
+        $('[data-date]', row).value = new Date().toISOString().slice(0, 10);
+        $('[data-n]', row).focus();
+        markDirty();
+      });
+      gamesBox.appendChild(group);
     });
   }
+
+  function groupFor(game) { return $('[data-game="' + game.id + '"]', gamesBox); }
 
   // ---------- Form <-> settings ----------
   function fill(settings) {
     TEXT_FIELDS.forEach(function (k) { editor.elements[k].value = settings[k] || ''; });
     editor.elements.licenceConfirmed.checked = !!settings.licenceConfirmed;
-    resultsBox.replaceChildren();
-    (settings.results || []).forEach(function (r) { addResultRow(r); });
+    GAMES.forEach(function (game) {
+      var g = (settings.lotto || {})[game.id] || {};
+      var group = groupFor(game);
+      $('[data-g="jackpot"]', group).value = g.jackpot || '';
+      $('[data-g="nextDraw"]', group).value = g.nextDraw || '';
+      var box = $('[data-results]', group);
+      box.replaceChildren();
+      (g.results || []).forEach(function (r) { addResultRow(game, box, r); });
+    });
   }
 
   function collect() {
-    var out = {};
+    var out = { lotto: {} };
     TEXT_FIELDS.forEach(function (k) { out[k] = editor.elements[k].value.trim(); });
     out.licenceConfirmed = editor.elements.licenceConfirmed.checked;
-    out.results = readResults();
+    GAMES.forEach(function (game) {
+      var group = groupFor(game);
+      out.lotto[game.id] = {
+        jackpot: $('[data-g="jackpot"]', group).value.trim(),
+        nextDraw: $('[data-g="nextDraw"]', group).value.trim(),
+        results: $all('.admin-result', group).map(function (row) {
+          return {
+            date: $('[data-date]', row).value,
+            numbers: $all('[data-n]', row).map(function (input) { return input.value === '' ? NaN : Number(input.value); })
+          };
+        })
+      };
+    });
     return out;
   }
 
   function localProblems(data) {
     var problems = [];
-    data.results.forEach(function (r, i) {
-      var label = 'Result ' + (i + 1);
-      if (!r.date) problems.push(label + ': pick a date.');
-      if (!r.numbers.every(function (n) { return Number.isInteger(n) && n >= 0 && n <= 99; })) problems.push(label + ': numbers must be whole numbers from 0 to 99.');
-      else if (new Set(r.numbers).size !== 3) problems.push(label + ': the three numbers must all be different.');
+    GAMES.forEach(function (game) {
+      var g = data.lotto[game.id];
+      if (!g.jackpot) problems.push(game.name + ': enter a jackpot.');
+      g.results.forEach(function (r, i) {
+        var label = game.name + ' result ' + (i + 1);
+        if (!r.date) problems.push(label + ': pick a date.');
+        if (!r.numbers.every(function (n) { return Number.isInteger(n) && n >= 0 && n <= 99; })) problems.push(label + ': fill in all ' + game.picks + ' numbers (0 to 99).');
+        else if (new Set(r.numbers).size !== game.picks) problems.push(label + ': the numbers must all be different.');
+      });
     });
     return problems;
   }
@@ -132,13 +220,6 @@
 
   editor.addEventListener('input', markDirty);
 
-  $('[data-add-result]').addEventListener('click', function () {
-    var row = addResultRow(null, true);
-    $('[data-r="date"]', row).value = new Date().toISOString().slice(0, 10);
-    $('[data-r="n0"]', row).focus();
-    markDirty();
-  });
-
   editor.addEventListener('submit', function (e) {
     e.preventDefault();
     saveError.hidden = true;
@@ -166,6 +247,8 @@
   logoutBtn.addEventListener('click', function () { setToken(null); location.reload(); });
 
   window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+  buildGameGroups();
 
   // Resume a session from earlier in this tab.
   if (getToken()) {

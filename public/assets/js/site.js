@@ -48,20 +48,25 @@
     var channel = String(s.youtubeChannelUrl || '').replace(/\/+$/, '');
     var handleMatch = channel.match(/\/(@[^/]+)$/);
     var handle = handleMatch ? handleMatch[1] : 'YouTube';
+    var text = {
+      ussdCode: s.ussdCode,
+      whatsappNumber: s.whatsappNumber,
+      phoneNumber: s.phoneNumber,
+      email: s.email,
+      youtubeHandle: channel.replace(/^https?:\/\/(www\.)?/, ''),
+      youtubeShortHandle: handle,
+      licenceLine: s.licenceConfirmed
+        ? 'Licensed by the Lotteries & Gaming Board of Zimbabwe.'
+        : 'Licensed by the Lotteries & Gaming Board — licence to be confirmed once granted.'
+    };
+    // Per-game Lotto values, bound as e.g. data-s="mega7.jackpot" / data-s="mega7.nextDrawLabel".
+    Object.keys(s.lotto || {}).forEach(function (id) {
+      var g = s.lotto[id];
+      text[id + '.jackpot'] = g.jackpot;
+      text[id + '.nextDrawLabel'] = g.nextDraw ? 'Next draw · ' + g.nextDraw : 'Weekly draw';
+    });
     return {
-      text: {
-        jackpotAmount: s.jackpotAmount,
-        nextDrawDate: s.nextDrawDate,
-        ussdCode: s.ussdCode,
-        whatsappNumber: s.whatsappNumber,
-        phoneNumber: s.phoneNumber,
-        email: s.email,
-        youtubeHandle: channel.replace(/^https?:\/\/(www\.)?/, ''),
-        youtubeShortHandle: handle,
-        licenceLine: s.licenceConfirmed
-          ? 'Licensed by the Lotteries & Gaming Board of Zimbabwe.'
-          : 'Licensed by the Lotteries & Gaming Board — licence to be confirmed once granted.'
-      },
+      text: text,
       href: {
         whatsapp: 'https://wa.me/' + digits(s.whatsappNumber),
         phone: 'tel:+' + digits(s.phoneNumber),
@@ -80,37 +85,19 @@
     return b;
   }
 
-  function renderResults(results) {
-    if (!Array.isArray(results) || !results.length) return;
-    var latest = results[0];
-    var dateEl = $('[data-latest-date]');
-    var ballsEl = $('[data-latest-balls]');
-    if (dateEl) { dateEl.textContent = formatDate(latest.date); dateEl.setAttribute('datetime', latest.date); }
-    if (ballsEl) {
-      ballsEl.replaceChildren.apply(ballsEl, latest.numbers.map(function (n) { return makeBall(n, 'ball--result'); }));
+  // Latest result per Lotto game; games with no results keep their "Awaiting first draw" note.
+  function renderResults(lotto) {
+    $all('[data-result]').forEach(function (item) {
+      var game = lotto && lotto[item.getAttribute('data-result')];
+      var latest = game && Array.isArray(game.results) ? game.results[0] : null;
+      if (!latest) return;
+      var dateEl = $('[data-result-date]', item);
+      var ballsEl = $('[data-result-balls]', item);
+      dateEl.textContent = formatDate(latest.date);
+      dateEl.setAttribute('datetime', latest.date);
+      ballsEl.replaceChildren.apply(ballsEl, latest.numbers.map(function (n) { return makeBall(n, 'ball--mini'); }));
       ballsEl.setAttribute('aria-label', 'Winning numbers ' + latest.numbers.map(pad2).join(', '));
-    }
-
-    var wrap = $('[data-past-wrap]');
-    var list = $('[data-past-list]');
-    if (!wrap || !list) return;
-    var past = results.slice(1, 6);
-    list.replaceChildren();
-    past.forEach(function (r) {
-      var li = document.createElement('li');
-      var d = document.createElement('time');
-      d.className = 'past__date';
-      d.dateTime = r.date;
-      d.textContent = formatDate(r.date);
-      var balls = document.createElement('span');
-      balls.className = 'balls';
-      balls.setAttribute('aria-label', r.numbers.map(pad2).join(', '));
-      r.numbers.forEach(function (n) { balls.appendChild(makeBall(n, 'ball--mini')); });
-      li.appendChild(d);
-      li.appendChild(balls);
-      list.appendChild(li);
     });
-    wrap.hidden = past.length === 0;
   }
 
   function renderLiveVideo(videoId) {
@@ -137,7 +124,7 @@
     });
     var licence = $('[data-licence]');
     if (licence) licence.classList.toggle('is-confirmed', !!s.licenceConfirmed);
-    renderResults(s.results);
+    renderResults(s.lotto);
     renderLiveVideo(s.liveVideoId);
   }
 
