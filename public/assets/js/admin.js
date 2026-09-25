@@ -5,10 +5,10 @@
   var TOKEN_KEY = 'gsl_admin_pw';
   // Must match LOTTO_GAMES in lib/settings.mjs.
   var GAMES = [
-    { id: 'mega7', name: 'Mega 7', picks: 7 },
-    { id: 'wild5', name: 'Wild 5', picks: 5 },
-    { id: 'fast5', name: 'Fast 5', picks: 5 },
-    { id: 'easy6', name: 'Easy 6', picks: 6 }
+    { id: 'mega7', name: 'Mega 7', picks: 7, max: 37 },
+    { id: 'wild5', name: 'Wild 5', picks: 5, max: 49 },
+    { id: 'fast5', name: 'Fast 5', picks: 5, max: 42 },
+    { id: 'easy6', name: 'Easy 6', picks: 6, max: 39 }
   ];
   var TEXT_FIELDS = ['liveVideoId', 'youtubeChannelUrl', 'ussdCode', 'whatsappNumber', 'phoneNumber', 'email'];
 
@@ -61,8 +61,8 @@
   function numberInput(game, i) {
     var input = document.createElement('input');
     input.type = 'number';
-    input.min = '0';
-    input.max = '99';
+    input.min = '1';
+    input.max = String(game.max);
     input.step = '1';
     input.required = true;
     input.setAttribute('data-n', '');
@@ -91,7 +91,7 @@
     numsField.className = 'field';
     var numsLabel = document.createElement('span');
     numsLabel.className = 'admin-label';
-    numsLabel.textContent = game.picks + ' numbers';
+    numsLabel.textContent = game.picks + ' numbers (1–' + game.max + ')';
     var nums = document.createElement('div');
     nums.className = 'admin-nums';
     for (var i = 0; i < game.picks; i++) nums.appendChild(numberInput(game, i));
@@ -182,7 +182,7 @@
       g.results.forEach(function (r, i) {
         var label = game.name + ' result ' + (i + 1);
         if (!r.date) problems.push(label + ': pick a date.');
-        if (!r.numbers.every(function (n) { return Number.isInteger(n) && n >= 0 && n <= 99; })) problems.push(label + ': fill in all ' + game.picks + ' numbers (0 to 99).');
+        if (!r.numbers.every(function (n) { return Number.isInteger(n) && n >= 1 && n <= game.max; })) problems.push(label + ': fill in all ' + game.picks + ' numbers (1 to ' + game.max + ').');
         else if (new Set(r.numbers).size !== game.picks) problems.push(label + ': the numbers must all be different.');
       });
     });

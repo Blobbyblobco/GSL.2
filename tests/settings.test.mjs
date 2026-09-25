@@ -57,10 +57,10 @@ test('PUT saves a valid partial update and GET returns it merged with defaults',
           nextDraw: 'Sat 4 Oct, 8pm',
           results: [
             { date: '2026-09-13', numbers: [1, 2, 3, 4, 5, 6, 7] },
-            { date: '2026-09-20', numbers: [9, 18, 27, 36, 45, 54, 63] },
+            { date: '2026-09-20', numbers: [9, 18, 27, 36, 37, 14, 3] },
           ],
         },
-        easy6: { results: [{ date: '2026-09-20', numbers: [0, 10, 20, 30, 40, 99] }] },
+        easy6: { results: [{ date: '2026-09-18', numbers: [1, 10, 20, 30, 38, 39] }] },
       },
     },
   });
@@ -100,6 +100,22 @@ test('PUT rejects invalid values with readable details', async () => {
   assert.equal(res.status, 400);
   const { details } = await res.json();
   assert.equal(details.length, 9, details.join('\n'));
+});
+
+test('Lotto results must fit each game\'s number range', async () => {
+  const bad = [
+    ['mega7', [0, 2, 3, 4, 5, 6, 7]],
+    ['mega7', [1, 2, 3, 4, 5, 6, 38]],
+    ['wild5', [1, 2, 3, 4, 50]],
+    ['fast5', [1, 2, 3, 4, 43]],
+    ['easy6', [1, 2, 3, 4, 5, 40]],
+  ];
+  for (const [id, numbers] of bad) {
+    const res = await call(memoryStore(), { method: 'PUT', password: PASSWORD, body: { lotto: { [id]: { results: [{ date: '2026-09-20', numbers }] } } } });
+    assert.equal(res.status, 400, `${id} ${numbers}`);
+  }
+  const ok = await call(memoryStore(), { method: 'PUT', password: PASSWORD, body: { lotto: { wild5: { results: [{ date: '2026-09-20', numbers: [1, 12, 23, 34, 49] }] } } } });
+  assert.equal(ok.status, 200);
 });
 
 test('PUT rejects malformed JSON', async () => {

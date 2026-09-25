@@ -60,10 +60,11 @@
         : 'Licensed by the Lotteries & Gaming Board — licence to be confirmed once granted.'
     };
     // Per-game Lotto values, bound as e.g. data-s="mega7.jackpot" / data-s="mega7.nextDrawLabel".
+    // With no next draw set, the page keeps its built-in "Every Sunday"-style label.
     Object.keys(s.lotto || {}).forEach(function (id) {
       var g = s.lotto[id];
       text[id + '.jackpot'] = g.jackpot;
-      text[id + '.nextDrawLabel'] = g.nextDraw ? 'Next draw · ' + g.nextDraw : 'Weekly draw';
+      if (g.nextDraw) text[id + '.nextDrawLabel'] = 'Next draw · ' + g.nextDraw;
     });
     return {
       text: text,

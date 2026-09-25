@@ -47,11 +47,15 @@ Every push to the connected branch redeploys the site automatically.
 Go to `https://<your-site>/admin/`, log in with `ADMIN_PASSWORD`, change what you need, and click
 **Save changes**.
 
-- **Lotto games (Mega 7, Wild 5, Fast 5, Easy 6):** each has its own jackpot, next draw and results.
-  After a draw, click **+ Add a draw result** under that game. The newest result shows on the site
-  under "Latest results". Leave "Next draw" empty and the site shows "Weekly draw".
-- **Rush games and scratch cards** are fixed text in `public/index.html` (prices, multipliers and
-  draw frequencies). Scratch cards are a "coming soon" placeholder until names, prices and prizes are final.
+- **Lotto games** — Mega 7 (7 of 37, Sundays), Wild 5 (5 of 49, Saturdays), Fast 5 (5 of 42, Fridays),
+  Easy 6 (6 of 39, Thursdays). Each has its own jackpot, next draw and results; results must be
+  different numbers from 1 to the game's maximum. After a draw, click **+ Add a draw result** under
+  that game. Leave "Next draw" empty and the site shows the regular day (e.g. "Every Sunday").
+- **Rush games and scratch cards** are fixed text in `public/index.html` (picks, prices, multipliers
+  and draw frequencies). Scratch cards are a "coming soon" placeholder until names, prices and prizes
+  are final.
+- **Pick 1 symbols** are line icons in the `<svg>` sprite at the top of `public/index.html`
+  (one `<symbol id="sym-…">` each), shown in the symbol grid in the Rush section.
 - **Live stream:** paste the YouTube live link (or video ID) before the draw so it plays on the
   page. Clear the field afterwards to go back to the "Watch live on YouTube" button.
 - **Licence:** tick the box once the Lotteries & Gaming Board licence is granted.
